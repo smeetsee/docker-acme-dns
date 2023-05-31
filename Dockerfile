@@ -22,6 +22,7 @@ VOLUME /home/container
 COPY --from=builder /tmp/acme-dns /opt/acme-dns
 # Give permissions to bind to well-known ports for non-root users
 RUN setcap CAP_NET_BIND_SERVICE=+eip /opt/acme-dns/acme-dns
+RUN setcap cap_ipc_lock= /opt/acme-dns/acme-dns
 
 EXPOSE 53 80 443
 EXPOSE 53/udp
