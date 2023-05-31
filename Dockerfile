@@ -19,7 +19,7 @@ VOLUME /home/container
 
 
 # Copy acme-dns binary
-COPY --from=builder /tmp/acme-dns /opt
+COPY --from=builder /tmp/acme-dns /opt/acme-dns
 # Give permissions to bind to well-known ports for non-root users
 RUN setcap CAP_NET_BIND_SERVICE=+eip /opt/acme-dns/acme-dns
 
