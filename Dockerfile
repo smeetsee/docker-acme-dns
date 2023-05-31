@@ -1,10 +1,11 @@
-FROM golang:latest AS builder
-
 # Based on https://github.com/smeetsee/docker-xteve/blob/5aec1fd39de1c6bcf50118dda5beeac9c75b1dd5/Dockerfile.pterodactyl
-RUN git clone https://github.com/joohoi/acme-dns /opt/acme-dns && \
-    cd /opt/acme-dns && \
-    export GOPATH=/tmp/acme-dns && \
-    go build
+#      and https://github.com/joohoi/acme-dns/blob/27e8251d11ba0a08c9b576fc04d61c1c7ba9b500/Dockerfile
+FROM golang:alpine AS builder
+RUN apk add --update gcc musl-dev git
+ENV GOPATH /tmp/buildcache
+RUN git clone https://github.com/joohoi/acme-dns /tmp/acme-dns
+WORKDIR /tmp/acme-dns
+RUN CGO_ENABLED=1 go build
 
 
 FROM alpine:3.18
@@ -21,9 +22,9 @@ VOLUME /home/container
 RUN ln -s /home/container/etc /etc/acme-dns && ln -s /home/container/var/lib /var/lib/acme-dns
 
 # Copy acme-dns binary
-COPY --from=builder /opt/acme-dns/acme-dns /usr/local/bin/acme-dns
+COPY --from=builder /tmp/acme-dns /opt/
 # Give permissions to bind to well-known ports for non-root users
-RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/acme-dns
+RUN setcap CAP_NET_BIND_SERVICE=+eip /opt/acme-dns/acme-dns
 
 EXPOSE 53 80 443
 EXPOSE 53/udp
