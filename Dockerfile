@@ -23,7 +23,7 @@ RUN ln -s /home/container/etc /etc/acme-dns && ln -s /home/container/var/lib /va
 # Copy acme-dns binary
 COPY --from=builder /opt/acme-dns/acme-dns /usr/local/bin/acme-dns
 # Give permissions to bind to well-known ports for non-root users
-RUN sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/acme-dns
+RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/acme-dns
 
 EXPOSE 53 80 443
 EXPOSE 53/udp
