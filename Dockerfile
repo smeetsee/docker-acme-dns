@@ -22,6 +22,9 @@ VOLUME /home/container
 COPY --from=builder /tmp/acme-dns /opt/acme-dns
 # Give permissions to bind to well-known ports for non-root users
 RUN setcap CAP_NET_BIND_SERVICE=+eip /opt/acme-dns/acme-dns
+
+# Necessary to fix 'operation not permitted' issues
+# Based on https://stackoverflow.com/a/64284885/2378368 and https://github.com/hashicorp/vault/issues/10048#issuecomment-706315167
 RUN setcap cap_ipc_lock= /opt/acme-dns/acme-dns
 
 EXPOSE 53 80 443
