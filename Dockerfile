@@ -18,9 +18,6 @@ RUN addgroup -g 2001 -S acme-dns && adduser -D -h /home/container -u 1001 -S con
 VOLUME /home/container
 
 
-# Symlink configuration directories into /home/container
-RUN ln -s /home/container/etc /etc/acme-dns && ln -s /home/container/var/lib /var/lib/acme-dns
-
 # Copy acme-dns binary
 COPY --from=builder /tmp/acme-dns /opt
 # Give permissions to bind to well-known ports for non-root users
