@@ -1,0 +1,30 @@
+diff --git a/db.go b/db.go
+index 301ac81..adab262 100644
+--- a/db.go
++++ b/db.go
+@@ -161,12 +161,13 @@ func (d *acmedb) handleDBUpgradeTo1() error {
+ 	return err
+ }
+ 
+-// Create two rows for subdomain to the txt table
++// Create 100 rows for subdomain to the txt table
+ func (d *acmedb) NewTXTValuesInTransaction(tx *sql.Tx, subdomain string) error {
+ 	var err error
+ 	instr := fmt.Sprintf("INSERT INTO txt (Subdomain, LastUpdate) values('%s', 0)", subdomain)
+-	_, _ = tx.Exec(instr)
+-	_, _ = tx.Exec(instr)
++	for i := 1; i <=100; i++ {
++		_, _ = tx.Exec(instr)
++	}
+ 	return err
+ }
+ 
+@@ -253,7 +254,7 @@ func (d *acmedb) GetTXTForDomain(domain string) ([]string, error) {
+ 	domain = sanitizeString(domain)
+ 	var txts []string
+ 	getSQL := `
+-	SELECT Value FROM txt WHERE Subdomain=$1 LIMIT 2
++	SELECT Value FROM txt WHERE Subdomain=$1 LIMIT 100
+ 	`
+ 	if Config.Database.Engine == "sqlite3" {
+ 		getSQL = getSQLiteStmt(getSQL)
